@@ -1,6 +1,7 @@
 module Datamax
   class Label
     attr_writer :heat, :dot_size
+    attr_reader :state
     include Commandable
 
     START            = 'L'
@@ -19,7 +20,7 @@ module Datamax
 
     def end!
       self << FINISH 
-      @state = :finished
+      self.state = :finished
     end
 
     def [](arg)
@@ -27,6 +28,7 @@ module Datamax
     end
 
     def <<(arg)
+      raise EndedElementError unless state == :open
       @contents << arg << NEW_LINE
     end
 
@@ -48,11 +50,15 @@ module Datamax
 
     private
     def start(options = {})
+      self.state = :open
       command START
       self << formatted_heat
       self << formatted_dot_size
-      @state = :started
       options.each_pair { |option, value| self.send("#{option}=", value) }
+    end
+
+    def state=(_state)
+      @state = _state
     end
   end
 end

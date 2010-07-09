@@ -6,9 +6,12 @@ module Datamax
   CR       = 13.chr
   LF       = 10.chr
   NEW_LINE = CR + LF
+  FEED     = 'F'
 
   module Commandable
     def command(param)
+      debugger
+      raise EndedElementError if self.state == :finished
       @contents << STX << param << NEW_LINE
     end
   end
@@ -17,4 +20,10 @@ module Datamax
     REFLEXIVE = 'r'
     EDGE      = 'e'
   end
+
+  class MissingPrinterNameError < StandardError; end
+  class EndedElementError         < StandardError; end
 end
+
+require 'job'
+require 'label'

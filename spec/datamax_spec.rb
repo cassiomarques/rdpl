@@ -18,4 +18,16 @@ describe Datamax do
       Datamax::LF.should == 10.chr
     end
   end
+
+  describe "::FEED" do
+    it "should have the 'F' caracter" do
+      Datamax::FEED.should == 'F'
+    end
+  end
+
+  describe "::NEW_LILE" do
+    it "should be equal to CR and LF concatenated" do
+      Datamax::NEW_LINE.should == Datamax::CR + Datamax::LF
+    end
+  end
 end

@@ -2,7 +2,6 @@ require 'spec_helper'
 
 
 describe Datamax::Label do
-  include Datamax
   def end_with_new_line
     simple_matcher('creates a new line') { |actual| actual[-2..-1] == CR + LF }
   end
@@ -16,6 +15,8 @@ describe Datamax::Label do
     subject { Datamax::Label::DEFAULT_HEAT }
     it { should == 14 }
   end
+
+  its(:state) { should == :open }
 
   describe "#contents" do
     it "is always started with STX L (for Label start), plus the dot size and heating settings" do
@@ -32,11 +33,27 @@ describe Datamax::Label do
   end
 
   describe "#end!" do
+    let(:label) { Datamax::Label.new }
+
     it "marks the label's end" do
-      label = Datamax::Label.new
       label.end!
       label[-3..-1].should == 'E' + Datamax::NEW_LINE
     end
+
+    it "alters the state to :closed" do
+      expect {
+        label.end!
+      }.to change { label.state }.to(:finished)
+    end
+  end
+
+  it "raises Datamax::EndedElementError if it's ended andwe try to add new content" do
+    label = Datamax::Label.new
+    label.end!
+    lambda do
+      label << 'some content'
+    end.should raise_error(Datamax::EndedElementError)
+    
   end
 
   describe "#command" do
