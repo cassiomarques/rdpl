@@ -1,7 +1,7 @@
 module Datamax
   class Label
-    attr_writer :heat, :dot_size
     attr_reader :state
+    attr_writer :job
     include Commandable
 
     START            = 'L'
@@ -36,16 +36,22 @@ module Datamax
       @dot_size || DEFAULT_DOT_SIZE
     end
 
-    def formatted_dot_size
-      "D#{dot_size}"
-    end
-
     def heat
       @heat || DEFAULT_HEAT
     end
 
-    def formatted_heat
-      "H#{heat}"
+    def mm?
+      @job ? @job.mm? : false
+    end
+
+    # Returns the start of print position for the label.
+    # If the option wasn't specified in the label's constructor, nil will be returned 
+    # and the printer will assume the default start of print.
+    #
+    # It works this way since the default value for this parameter depends on the printer's model.
+    def start_of_print
+      return nil if @start_of_print.nil?
+      @start_of_print.to_f / (mm? ? 10 : 100)
     end
 
     private
@@ -57,8 +63,18 @@ module Datamax
       options.each_pair { |option, value| self.send("#{option}=", value) }
     end
 
-    def state=(_state)
-      @state = _state
+    [:state, :heat, :dot_size, :start_of_print].each do |method|
+      define_method "#{method}=" do |value| 
+        self.instance_variable_set :"@#{method}", value
+      end
+    end
+
+    def formatted_dot_size
+      "D#{dot_size}"
+    end
+
+    def formatted_heat
+      "H#{heat}"
     end
   end
 end

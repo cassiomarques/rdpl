@@ -18,15 +18,27 @@ describe Datamax::Label do
 
   its(:state) { should == :open }
 
+  describe "mm?" do
+    it "delegates to the printing job" do
+      label = Datamax::Label.new
+      label.job = Datamax::Job.new :printer => 'foobar', :measurement => :metric
+      label.should be_mm
+    end
+
+    it "returns false if the label has no job" do
+      Datamax::Label.new.should_not be_mm
+    end
+  end
+
   describe "#contents" do
     it "is always started with STX L (for Label start), plus the dot size and heating settings" do
       label = Datamax::Label.new
       expected = Datamax::STX + 
                  Datamax::Label::START + 
                  Datamax::NEW_LINE + 
-                 label.formatted_heat + 
+                 "H#{Datamax::Label::DEFAULT_HEAT}" +
                  Datamax::NEW_LINE + 
-                 label.formatted_dot_size + 
+                 "D#{Datamax::Label::DEFAULT_DOT_SIZE}" + 
                  Datamax::NEW_LINE
       label.dump.should == expected
     end
@@ -85,6 +97,10 @@ describe Datamax::Label do
     end
   end
 
+  describe "#start_of_print" do
+    
+  end
+
   describe "#dot_size" do
     it "returns the current dot size" do
       Datamax::Label.new(:dot_size => 20).dot_size.should == 20
@@ -92,20 +108,6 @@ describe Datamax::Label do
 
     it "returns Label::DEFAULT_DOT_SIZE by default" do
       Datamax::Label.new.dot_size.should == Datamax::Label::DEFAULT_DOT_SIZE
-    end
-  end
-
-  describe "#dot_size=" do
-    it "sets the value of the label's dot size" do
-      label = Datamax::Label.new
-      label.dot_size = 25
-      label.dot_size.should == 25
-    end
-  end
-
-  describe "#formatted_dot_size" do
-    it "returns the current dot size prefixed by 'D'" do
-      Datamax::Label.new(:dot_size => 25).formatted_dot_size.should == 'D25'
     end
   end
 
@@ -119,17 +121,23 @@ describe Datamax::Label do
     end
   end
 
-  describe "#heat=" do
-    it "sets the value of the label's heat setting" do
-      label = Datamax::Label.new
-      label.heat = 30
-      label.heat.should == 30
+  describe "#start_of_print" do
+    it "returns nil if start_of_print was not specified" do
+      Datamax::Label.new.start_of_print.should be_nil
     end
-  end
 
-  describe "#formatted_heat" do
-    it "returns the current heat prefixed by 'H'" do
-      Datamax::Label.new(:heat => 23).formatted_heat.should == 'H23'
-    end    
+    describe "when the measurenemt mode is inches" do
+      it "returns the configured start of print" do
+        Datamax::Label.new(:start_of_print => '0123').start_of_print.should == 1.23
+      end
+    end
+
+    describe "when the measurement mode is metric" do
+      it "returns the configured start of print" do
+        label = Datamax::Label.new(:start_of_print => '0123')
+        label.job = Datamax::Job.new :printer => 'foo', :measurement => :metric
+        label.start_of_print.should == 12.3
+      end
+    end
   end
 end

@@ -19,6 +19,43 @@ describe Datamax::Job do
     new_job.dump[0..1].should == Datamax::STX + Datamax::Sensor::EDGE
   end
 
+  describe "#measurement" do
+    it "returns the current job measurement mode" do
+      job = new_job :measurement => :metric
+      job.measurement.should == :metric
+    end
+
+    it "returns :inches by default" do
+      new_job.measurement.should == :inches
+    end
+
+    it "do not accepts values different from inches or metric" do
+      lambda do
+        new_job(:measurement => :foo)
+      end.should raise_error(ArgumentError)      
+    end
+  end
+
+  describe "#in?" do
+    it "returns true if the current measurement mode is :inches" do
+      new_job.should be_in
+    end
+
+    it "returns false if the current measurement mode is not :inches" do
+      new_job(:measurement => :metric).should_not be_in
+    end
+  end
+
+  describe "#mm?" do
+    it "returns true if the current measurement mode is :metric" do
+      new_job(:measurement => :metric).should be_mm
+    end
+
+    it "returns false if the current measurement mode is not :metric" do
+      new_job.should_not be_mm
+    end
+  end
+
   it "has a list of labels" do
     new_job.labels.should be_instance_of(Array)
   end
@@ -36,6 +73,14 @@ describe Datamax::Job do
       expect {
         job << label
       }.to change { job.labels.size }.by(1)
+    end
+
+    it "sets itself as the label's job" do
+      job = Datamax::Job.new :printer => 'foobar'
+      label = Datamax::Label.new
+      expect {
+        job << label
+      }.to change { label.instance_variable_get :@job }.from(nil).to(job)
     end
   end
 

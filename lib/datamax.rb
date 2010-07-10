@@ -10,7 +10,6 @@ module Datamax
 
   module Commandable
     def command(param)
-      debugger
       raise EndedElementError if self.state == :finished
       @contents << STX << param << NEW_LINE
     end
