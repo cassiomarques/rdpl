@@ -26,3 +26,10 @@ end
 
 require 'job'
 require 'label'
+require 'elements/element'
+require 'elements/graphic'
+require 'elements/barcode'
+require 'elements/bitmapped_text'
+require 'elements/lines_and_boxes'
+require 'elements/line'
+require 'elements/box'

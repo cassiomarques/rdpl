@@ -33,12 +33,12 @@ describe Datamax::Label do
   describe "#contents" do
     it "is always started with STX L (for Label start), plus the dot size and heating settings" do
       label = Datamax::Label.new
-      expected = Datamax::STX + 
-                 Datamax::Label::START + 
-                 Datamax::NEW_LINE + 
+      expected = Datamax::STX +
+                 Datamax::Label::START +
+                 Datamax::NEW_LINE +
                  "H#{Datamax::Label::DEFAULT_HEAT}" +
-                 Datamax::NEW_LINE + 
-                 "D#{Datamax::Label::DEFAULT_DOT_SIZE}" + 
+                 Datamax::NEW_LINE +
+                 "D#{Datamax::Label::DEFAULT_DOT_SIZE}" +
                  Datamax::NEW_LINE
       label.dump.should == expected
     end
@@ -57,6 +57,13 @@ describe Datamax::Label do
         label.end!
       }.to change { label.state }.to(:finished)
     end
+
+    it "adds the quantity command if a quantity was specified" do
+      label = Datamax::Label.new
+      label.quantity = 5
+      label.end!
+      label.dump[-10..-6].should == 'Q0005'
+    end
   end
 
   it "raises Datamax::EndedElementError if it's ended andwe try to add new content" do
@@ -65,7 +72,6 @@ describe Datamax::Label do
     lambda do
       label << 'some content'
     end.should raise_error(Datamax::EndedElementError)
-    
   end
 
   describe "#command" do
@@ -98,7 +104,7 @@ describe Datamax::Label do
   end
 
   describe "#start_of_print" do
-    
+
   end
 
   describe "#dot_size" do
@@ -138,6 +144,66 @@ describe Datamax::Label do
         label.job = Datamax::Job.new :printer => 'foo', :measurement => :metric
         label.start_of_print.should == 12.3
       end
+    end
+  end
+
+  describe "#add_line" do
+    it "should add a line element to the label's contents" do
+      label = Datamax::Label.new
+      label.add_line do |line|
+        line.horizontal_width = 12.2
+        line.vertical_width   = 14.3
+        line.row_position     = 23.4
+        line.column_position  = 24.5
+      end
+      label.dump.should include("1X1100002340245l01220143#{Datamax::NEW_LINE}")
+    end
+  end
+
+  describe "#add_box" do
+    it "should add a box element to the label's contents" do
+      label = Datamax::Label.new
+      label.add_box do |box|
+        box.horizontal_width         = 12.2
+        box.vertical_width           = 14.3
+        box.row_position             = 23.4
+        box.column_position          = 24.5
+        box.bottom_and_top_thickness = 34.6
+        box.sides_thickness          = 45.6
+      end
+      label.dump.should include("1X1100002340245b0122014303460456#{Datamax::NEW_LINE}")
+    end
+  end
+
+  describe "#add_barcode" do
+    it "should add a barcode element to the label's contents" do
+      label = Datamax::Label.new
+      label.add_barcode do |barcode|
+        barcode.rotation              = 4
+        barcode.font_id               = 'e'
+        barcode.data                  = 'SOME DATA 12345'
+        barcode.height                = 123
+        barcode.wide_bar_multiplier   = 3
+        barcode.narrow_bar_multiplier = 4
+        barcode.row_position          = 123
+        barcode.column_position       = 234
+      end
+      label.dump.should include('4e3412301230234SOME DATA 12345')
+    end
+  end
+
+  describe "#add_bitmapped_text" do
+    it "should add a bitmapped text element to the labe's contents" do
+      label = Datamax::Label.new
+      label.add_bitmapped_text do |text|
+        text.font_id           = 2
+        text.width_multiplier  = 2
+        text.height_multiplier = 3
+        text.row_position      = 20
+        text.column_position   = 30
+        text.data              = 'HEY LOOK AT ME'
+      end
+      label.dump.should include('122300000200030HEY LOOK AT ME')
     end
   end
 end

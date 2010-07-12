@@ -1,7 +1,8 @@
 module Datamax
   class Label
-    attr_reader :state
+    attr_reader :state, :quantity
     attr_writer :job
+
     include Commandable
 
     START            = 'L'
@@ -19,6 +20,7 @@ module Datamax
     end
 
     def end!
+      self << formatted_quantity unless quantity.nil?
       self << FINISH 
       self.state = :finished
     end
@@ -54,6 +56,18 @@ module Datamax
       @start_of_print.to_f / (mm? ? 10 : 100)
     end
 
+    {:line           => 'Line',
+     :box            => 'Box',
+     :barcode        => 'Barcode',
+     :bitmapped_text => 'BitmappedText'
+    }.each_pair do |kind, klass|
+      define_method "add_#{kind}" do |&block|
+        element = Datamax.const_get(klass).new
+        block.call element
+        self << element.to_s
+      end
+    end
+
     private
     def start(options = {})
       self.state = :open
@@ -63,11 +77,12 @@ module Datamax
       options.each_pair { |option, value| self.send("#{option}=", value) }
     end
 
-    [:state, :heat, :dot_size, :start_of_print].each do |method|
+    [:state, :heat, :dot_size, :start_of_print, :quantity].each do |method|
       define_method "#{method}=" do |value| 
         self.instance_variable_set :"@#{method}", value
       end
     end
+    public :quantity=
 
     def formatted_dot_size
       "D#{dot_size}"
@@ -75,6 +90,10 @@ module Datamax
 
     def formatted_heat
       "H#{heat}"
+    end
+
+    def formatted_quantity
+      "Q#{'%04d' % quantity}"       
     end
   end
 end
