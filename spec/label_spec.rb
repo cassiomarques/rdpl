@@ -101,6 +101,11 @@ describe Datamax::Label do
     it "puts the text inside the label" do
       label.dump.should include('BAR')
     end
+
+    it "allows inserting non-string elements" do
+      label << Datamax::Barcode.new(:data => 'BARCODE')
+      label.dump.should include('BARCODE')
+    end
   end
 
   describe "#start_of_print" do

@@ -31,7 +31,7 @@ module Datamax
 
     def <<(arg)
       raise EndedElementError unless state == :open
-      @contents << arg << NEW_LINE
+      @contents << arg.to_s << NEW_LINE
     end
 
     def dot_size
