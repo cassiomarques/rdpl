@@ -108,10 +108,6 @@ describe Datamax::Label do
     end
   end
 
-  describe "#start_of_print" do
-
-  end
-
   describe "#dot_size" do
     it "returns the current dot size" do
       Datamax::Label.new(:dot_size => 20).dot_size.should == 20
