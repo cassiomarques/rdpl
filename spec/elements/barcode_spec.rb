@@ -51,7 +51,7 @@ describe Rdpl::Barcode do
     it "returns the barcode's string representation" do
       barcode = Rdpl::Barcode.new(
         :rotation              => 4,
-        :font_id               => 'e',
+        :font_id               => Rdpl::Barcode::CODE_128,
         :data                  => 'SOME DATA 12345',
         :height                => 123,
         :wide_bar_multiplier   => 3,
