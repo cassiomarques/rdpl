@@ -3,6 +3,12 @@ require 'spec_helper'
 describe Datamax::Barcode do
   let(:barcode) { Datamax::Barcode.new }
 
+  describe "::CODE_128" do
+    it "equals 'E'" do
+      Datamax::Barcode::CODE_128.should == 'E'
+    end
+  end
+
   describe "#height=" do
     it "defines the barcode height" do
       barcode.height = 100

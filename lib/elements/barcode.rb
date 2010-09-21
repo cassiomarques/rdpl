@@ -2,6 +2,8 @@ module Datamax
   class Barcode
     include Element
 
+    CODE_128 = "E"
+
     alias :wide_bar_multiplier :width_multiplier
     alias :wide_bar_multiplier= :width_multiplier=
     alias :narrow_bar_multiplier :height_multiplier
