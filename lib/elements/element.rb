@@ -1,4 +1,4 @@
-module Datamax
+module Rdpl
   module Element
     ROTATION_0_DEGREES   = 1
     ROTATION_90_DEGREES  = 2

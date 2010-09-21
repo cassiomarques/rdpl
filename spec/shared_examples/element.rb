@@ -10,13 +10,13 @@ shared_examples_for "element" do
     it "raises InvalidRotationError if the value is below the range limit" do
       lambda do
         element.rotation = element.send(:valid_rotation_range).to_a[0] - 1
-      end.should raise_error(Datamax::Element::InvalidRotationError)
+      end.should raise_error(Rdpl::Element::InvalidRotationError)
     end
 
     it "raises InvalidRotationError if the value is above the range limit" do
       lambda do
         element.rotation = element.send(:valid_rotation_range).to_a[-1] + 1
-      end.should raise_error(Datamax::Element::InvalidRotationError)
+      end.should raise_error(Rdpl::Element::InvalidRotationError)
     end
   end
 
@@ -45,13 +45,13 @@ shared_examples_for "element" do
     it "raises InvalidFontIdError if the font_id is below the range limit" do
       lambda do
         element.font_id = element.send(:valid_font_id_ranges).first.to_a[0] - 1
-      end.should raise_error(Datamax::Element::InvalidFontIdError)
+      end.should raise_error(Rdpl::Element::InvalidFontIdError)
     end
 
     it "raises InvalidFontIdError if the font_id is above 9" do
       lambda do
         element.font_id = element.send(:valid_font_id_ranges).first.to_a[-1] + 1
-      end.should raise_error(Datamax::Element::InvalidFontIdError)
+      end.should raise_error(Rdpl::Element::InvalidFontIdError)
     end
   end
 
@@ -73,19 +73,19 @@ shared_examples_for "element" do
     it "raises InvalidWidthMultiplierError if the multiplier is less than 1 (base 25)" do
       lambda do
         element.width_multiplier = 0
-      end.should raise_error(Datamax::Element::InvalidWidthMultiplierError)
+      end.should raise_error(Rdpl::Element::InvalidWidthMultiplierError)
     end
 
     it "raises InvalidWidthMultiplierError if the multiplier is more than O (base 25)" do
       lambda do
         element.width_multiplier = 'P'           
-      end.should raise_error(Datamax::Element::InvalidWidthMultiplierError)
+      end.should raise_error(Rdpl::Element::InvalidWidthMultiplierError)
     end
 
     it "raises InvalidWidthMultiplierError if the multiplier is not in base 25" do
       lambda do
         element.width_multiplier = 10
-      end.should raise_error(Datamax::Element::InvalidWidthMultiplierError)
+      end.should raise_error(Rdpl::Element::InvalidWidthMultiplierError)
     end
   end
 
@@ -109,19 +109,19 @@ shared_examples_for "element" do
     it "raises InvalidHeightMultiplierError if the multiplier is less than 1 (base 25)" do
       lambda do
         element.height_multiplier = 0
-      end.should raise_error(Datamax::Element::InvalidHeightMultiplierError)
+      end.should raise_error(Rdpl::Element::InvalidHeightMultiplierError)
     end
 
     it "raises InvalidHeightMultiplierError if the multiplier is more than O (base 25)" do
       lambda do
         element.height_multiplier = 'P'           
-      end.should raise_error(Datamax::Element::InvalidHeightMultiplierError)
+      end.should raise_error(Rdpl::Element::InvalidHeightMultiplierError)
     end
 
     it "raises InvalidHeightMultiplierError if the multiplier is not in base 25" do
       lambda do
         element.height_multiplier = 10
-      end.should raise_error(Datamax::Element::InvalidHeightMultiplierError)
+      end.should raise_error(Rdpl::Element::InvalidHeightMultiplierError)
     end
   end
 

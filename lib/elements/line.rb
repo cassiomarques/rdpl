@@ -1,4 +1,4 @@
-module Datamax
+module Rdpl
   class Line 
     DEFAULT_CHARACTER = 'l'
 

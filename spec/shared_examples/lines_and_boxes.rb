@@ -51,7 +51,7 @@ shared_examples_for 'lines and boxes' do
     it "should raise FixedValueError when trying to change the value" do
       lambda do
         element.width_multiplier = 2
-      end.should raise_error(Datamax::Element::FixedValueError)
+      end.should raise_error(Rdpl::Element::FixedValueError)
     end
   end
 
@@ -59,7 +59,7 @@ shared_examples_for 'lines and boxes' do
     it "should raise FixedValueError when trying to change the value" do
       lambda do
         element.height_multiplier = 2
-      end.should raise_error(Datamax::Element::FixedValueError)
+      end.should raise_error(Rdpl::Element::FixedValueError)
     end
   end
 
@@ -67,7 +67,7 @@ shared_examples_for 'lines and boxes' do
     it "should raise InvalidAssigmentError" do
       lambda do
         element.data = 'foo'
-      end.should raise_error(Datamax::Element::InvalidAssigmentError)
+      end.should raise_error(Rdpl::Element::InvalidAssigmentError)
     end
   end
 end

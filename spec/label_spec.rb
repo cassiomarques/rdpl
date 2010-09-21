@@ -1,18 +1,18 @@
 require 'spec_helper'
 
 
-describe Datamax::Label do
+describe Rdpl::Label do
   def end_with_new_line
     simple_matcher('creates a new line') { |actual| actual[-2..-1] == CR + LF }
   end
 
   describe "::DEFAULT_DOT_SIZE" do
-    subject { Datamax::Label::DEFAULT_DOT_SIZE }
+    subject { Rdpl::Label::DEFAULT_DOT_SIZE }
     it { should == 11 }
   end
 
   describe "::DEFAULT_HEAT" do
-    subject { Datamax::Label::DEFAULT_HEAT }
+    subject { Rdpl::Label::DEFAULT_HEAT }
     it { should == 14 }
   end
 
@@ -20,36 +20,36 @@ describe Datamax::Label do
 
   describe "mm?" do
     it "delegates to the printing job" do
-      label = Datamax::Label.new
-      label.job = Datamax::Job.new :printer => 'foobar', :measurement => :metric
+      label = Rdpl::Label.new
+      label.job = Rdpl::Job.new :printer => 'foobar', :measurement => :metric
       label.should be_mm
     end
 
     it "returns false if the label has no job" do
-      Datamax::Label.new.should_not be_mm
+      Rdpl::Label.new.should_not be_mm
     end
   end
 
   describe "#contents" do
     it "is always started with STX L (for Label start), plus the dot size and heating settings" do
-      label = Datamax::Label.new
-      expected = Datamax::STX +
-                 Datamax::Label::START +
-                 Datamax::NEW_LINE +
-                 "H#{Datamax::Label::DEFAULT_HEAT}" +
-                 Datamax::NEW_LINE +
-                 "D#{Datamax::Label::DEFAULT_DOT_SIZE}" +
-                 Datamax::NEW_LINE
+      label = Rdpl::Label.new
+      expected = Rdpl::STX +
+                 Rdpl::Label::START +
+                 Rdpl::NEW_LINE +
+                 "H#{Rdpl::Label::DEFAULT_HEAT}" +
+                 Rdpl::NEW_LINE +
+                 "D#{Rdpl::Label::DEFAULT_DOT_SIZE}" +
+                 Rdpl::NEW_LINE
       label.dump.should == expected
     end
   end
 
   describe "#end!" do
-    let(:label) { Datamax::Label.new }
+    let(:label) { Rdpl::Label.new }
 
     it "marks the label's end" do
       label.end!
-      label[-3..-1].should == 'E' + Datamax::NEW_LINE
+      label[-3..-1].should == 'E' + Rdpl::NEW_LINE
     end
 
     it "alters the state to :closed" do
@@ -59,40 +59,40 @@ describe Datamax::Label do
     end
 
     it "adds the quantity command if a quantity was specified" do
-      label = Datamax::Label.new
+      label = Rdpl::Label.new
       label.quantity = 5
       label.end!
       label.dump[-10..-6].should == 'Q0005'
     end
   end
 
-  it "raises Datamax::EndedElementError if it's ended andwe try to add new content" do
-    label = Datamax::Label.new
+  it "raises Rdpl::EndedElementError if it's ended andwe try to add new content" do
+    label = Rdpl::Label.new
     label.end!
     lambda do
       label << 'some content'
-    end.should raise_error(Datamax::EndedElementError)
+    end.should raise_error(Rdpl::EndedElementError)
   end
 
   describe "#command" do
-    let(:label) { Datamax::Label.new }
+    let(:label) { Rdpl::Label.new }
     before(:each) { label.command 'FOO' }
 
     it { end_with_new_line }
 
     it "records the command in the label's contents" do
-      expected = Datamax::STX + 'FOO'
+      expected = Rdpl::STX + 'FOO'
       label.dump.should include(expected)
     end
 
     it "ends with CR/LF" do
-      expected = Datamax::CR + Datamax::LF
+      expected = Rdpl::CR + Rdpl::LF
       label[-2..-1].should == expected
     end
   end
 
   describe "#<<" do
-    let(:label) { Datamax::Label.new }
+    let(:label) { Rdpl::Label.new }
 
     before(:each) { label << 'BAR' }
 
@@ -103,46 +103,46 @@ describe Datamax::Label do
     end
 
     it "allows inserting non-string elements" do
-      label << Datamax::Barcode.new(:data => 'BARCODE')
+      label << Rdpl::Barcode.new(:data => 'BARCODE')
       label.dump.should include('BARCODE')
     end
   end
 
   describe "#dot_size" do
     it "returns the current dot size" do
-      Datamax::Label.new(:dot_size => 20).dot_size.should == 20
+      Rdpl::Label.new(:dot_size => 20).dot_size.should == 20
     end
 
     it "returns Label::DEFAULT_DOT_SIZE by default" do
-      Datamax::Label.new.dot_size.should == Datamax::Label::DEFAULT_DOT_SIZE
+      Rdpl::Label.new.dot_size.should == Rdpl::Label::DEFAULT_DOT_SIZE
     end
   end
 
   describe "#heat" do
     it "returns the current heat setting" do
-      Datamax::Label.new(:heat => 25).heat.should == 25
+      Rdpl::Label.new(:heat => 25).heat.should == 25
     end
 
     it "returns Label::DEFAULT_HEAT by default" do
-      Datamax::Label.new.heat.should == Datamax::Label::DEFAULT_HEAT
+      Rdpl::Label.new.heat.should == Rdpl::Label::DEFAULT_HEAT
     end
   end
 
   describe "#start_of_print" do
     it "returns nil if start_of_print was not specified" do
-      Datamax::Label.new.start_of_print.should be_nil
+      Rdpl::Label.new.start_of_print.should be_nil
     end
 
     describe "when the measurenemt mode is inches" do
       it "returns the configured start of print" do
-        Datamax::Label.new(:start_of_print => '0123').start_of_print.should == 1.23
+        Rdpl::Label.new(:start_of_print => '0123').start_of_print.should == 1.23
       end
     end
 
     describe "when the measurement mode is metric" do
       it "returns the configured start of print" do
-        label = Datamax::Label.new(:start_of_print => '0123')
-        label.job = Datamax::Job.new :printer => 'foo', :measurement => :metric
+        label = Rdpl::Label.new(:start_of_print => '0123')
+        label.job = Rdpl::Job.new :printer => 'foo', :measurement => :metric
         label.start_of_print.should == 12.3
       end
     end
@@ -150,20 +150,20 @@ describe Datamax::Label do
 
   describe "#add_line" do
     it "should add a line element to the label's contents" do
-      label = Datamax::Label.new
+      label = Rdpl::Label.new
       label.add_line do |line|
         line.horizontal_width = 12.2
         line.vertical_width   = 14.3
         line.row_position     = 23.4
         line.column_position  = 24.5
       end
-      label.dump.should include("1X1100002340245l01220143#{Datamax::NEW_LINE}")
+      label.dump.should include("1X1100002340245l01220143#{Rdpl::NEW_LINE}")
     end
   end
 
   describe "#add_box" do
     it "should add a box element to the label's contents" do
-      label = Datamax::Label.new
+      label = Rdpl::Label.new
       label.add_box do |box|
         box.horizontal_width         = 12.2
         box.vertical_width           = 14.3
@@ -172,13 +172,13 @@ describe Datamax::Label do
         box.bottom_and_top_thickness = 34.6
         box.sides_thickness          = 45.6
       end
-      label.dump.should include("1X1100002340245b0122014303460456#{Datamax::NEW_LINE}")
+      label.dump.should include("1X1100002340245b0122014303460456#{Rdpl::NEW_LINE}")
     end
   end
 
   describe "#add_barcode" do
     it "should add a barcode element to the label's contents" do
-      label = Datamax::Label.new
+      label = Rdpl::Label.new
       label.add_barcode do |barcode|
         barcode.rotation              = 4
         barcode.font_id               = 'e'
@@ -195,7 +195,7 @@ describe Datamax::Label do
 
   describe "#add_bitmapped_text" do
     it "should add a bitmapped text element to the labe's contents" do
-      label = Datamax::Label.new
+      label = Rdpl::Label.new
       label.add_bitmapped_text do |text|
         text.font_id           = 2
         text.width_multiplier  = 2

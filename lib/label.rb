@@ -1,4 +1,4 @@
-module Datamax
+module Rdpl
   class Label
     attr_reader :state, :quantity
     attr_writer :job
@@ -62,7 +62,7 @@ module Datamax
      :bitmapped_text => 'BitmappedText'
     }.each_pair do |kind, klass|
       define_method "add_#{kind}" do |&block|
-        element = Datamax.const_get(klass).new
+        element = Rdpl.const_get(klass).new
         block.call element
         self << element.to_s
       end

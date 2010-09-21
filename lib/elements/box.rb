@@ -1,4 +1,4 @@
-module Datamax
+module Rdpl
   class Box
     attr_writer :bottom_and_top_thickness, :sides_thickness
 

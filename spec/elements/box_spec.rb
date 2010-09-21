@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Datamax::Box do
-  let(:element) { Datamax::Box.new }
+describe Rdpl::Box do
+  let(:element) { Rdpl::Box.new }
 
   it_should_behave_like 'lines and boxes'
 
@@ -43,7 +43,7 @@ describe Datamax::Box do
 
   describe "#to_s" do
     it "should return a string represention of the graphic element" do
-      box = Datamax::Box.new(
+      box = Rdpl::Box.new(
         :horizontal_width         => 12.2,
         :vertical_width           => 14.3,
         :row_position             => 23.4,

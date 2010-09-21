@@ -1,6 +1,6 @@
 require 'tempfile'
 
-module Datamax
+module Rdpl
   class Job
     attr_reader :labels, :printer, :state
     attr_writer :sensor

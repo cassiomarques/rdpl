@@ -1,4 +1,4 @@
-module Datamax
+module Rdpl
   module LinesAndBoxes
     attr_writer :vertical_width, :horizontal_width
 

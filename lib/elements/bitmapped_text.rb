@@ -1,4 +1,4 @@
-module Datamax
+module Rdpl
   class BitmappedText
     include Element
 

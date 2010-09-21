@@ -1,4 +1,4 @@
-module Datamax
+module Rdpl
   module Graphic
     def font_id
       'X'

@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Datamax::BitmappedText do
+describe Rdpl::BitmappedText do
 
   it_should_behave_like "element"
 
   describe "#to_s" do
     it "should return a string represention of the text element" do
-      text = Datamax::BitmappedText.new(
+      text = Rdpl::BitmappedText.new(
         :font_id           => 2,
         :width_multiplier  => 2,
         :height_multiplier => 3,
