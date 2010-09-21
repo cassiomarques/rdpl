@@ -2,7 +2,8 @@ module Rdpl
   class Barcode
     include Element
 
-    CODE_128 = "E"
+    CODE_128       = 'e'
+    CODE_128_HUMAN = "E"
 
     alias :wide_bar_multiplier :width_multiplier
     alias :wide_bar_multiplier= :width_multiplier=

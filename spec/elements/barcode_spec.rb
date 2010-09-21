@@ -4,8 +4,14 @@ describe Rdpl::Barcode do
   let(:barcode) { Rdpl::Barcode.new }
 
   describe "::CODE_128" do
+    it "equals 'e'" do
+      Rdpl::Barcode::CODE_128.should == 'e'
+    end
+  end
+
+  describe "::CODE_128_HUMAN" do
     it "equals 'E'" do
-      Rdpl::Barcode::CODE_128.should == 'E'
+      Rdpl::Barcode::CODE_128_HUMAN.should == 'E'
     end
   end
 
