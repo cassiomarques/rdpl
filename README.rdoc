@@ -1,6 +1,6 @@
 = rdpl
 
-Rdpl is a simple gem that abstracts *some* of the DPL (Datamax Programming Language)(TM) concepts. It's main purpose is to simplify the creation of labels to be printed using the Datamax(TM) series of printers.
+Rdpl is a simple gem that abstracts *some* of the DPL (Datamax Programming Language)(TM) concepts. Its main purpose is to simplify the creation of labels to be printed using the Datamax(TM) series of printers.
 
 It uses a very simple approach to send jobs to the printer. Basically, the printer has to be configured inside CUPS (Rdpl will use <tt>lpr</tt> to print), so it won't work on systems where CUPS is absent.
 
