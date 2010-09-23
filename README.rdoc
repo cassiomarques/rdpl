@@ -76,7 +76,7 @@ Take a look at the project's rdoc for available options.
 
 == Lines
 
-Lines may be created through the <tt>Rdpl::Element::Line<tt> class.
+Lines may be created through the <tt>Rdpl::Element::Line</tt> class.
 
   line = Rdpl::Line.new(
     :horizontal_width => 12.2,
