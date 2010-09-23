@@ -114,6 +114,7 @@ describe Rdpl::Job do
       job.dump[-4..-3].should == Rdpl::STX + Rdpl::FEED
     end
   end
+
   describe "#print" do
     let(:temp_file) { "" }
 

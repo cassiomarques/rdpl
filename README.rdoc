@@ -1,6 +1,106 @@
 = rdpl
 
-Description goes here.
+Rdpl is a simple gem that abstracts *some* of the DPL (Datamax Programming Language)(TM) concepts. It's main purpose is to simplify the creation of labels to be printed using the Datamax(TM) series of printers.
+
+It uses a very simple approach to send jobs to the printer. Basically, the printer has to be configured inside CUPS (Rdpl will use <tt>lpr</tt> to print), so it won't work on systems where CUPS is absent.
+
+== Jobs
+
+Print jobs are represented through instances of <tt>Rdpl::Job</tt>. A job may contain several labels to be printed and must receive the printer's cups id.
+
+  job = Rdpl::Job.new :printer => "some_printer_id"
+  job.print
+
+Take a look at the project's rdoc for available options.  
+
+== Labels
+
+Labels are represented through instances of <tt>Rdpl::Label</tt>. A label may contain several elements, which may be text, barcodes, lines, boxes or other graphical elements.
+
+  job = Rdpl::Job.new :printer => "some_printer_id"
+  label = Rdpl::Label.new(:quantity => 3, :dot_size => 12)
+  label << "some text"
+  label << Rdpl::Barcode.new :data => "123456"
+  job << label
+  job.print
+
+Labels also accept a block when adding new lines, barcodes, boxes or bitmapped text:
+
+  label = Label.new
+  label.add_line do |line|
+    line.horizontal_width = 12.2
+    line.vertical_width   = 14.3
+    line.row_position     = 23.4
+    line.column_position  = 24.5
+  end
+
+It'll always yield a new instance of the given element to the block, so you can specify the element's properties. The other available methods to add new elements to the label are <tt>add_barcode</tt>, <tt>add_box</tt> and <tt>add_bitmapped_text</tt>.
+
+Take a look at the project's rdoc for available options.
+
+== Elements
+
+You can add elements to the labels. Elements may be text, barcodes, lines, boxes or text printed with internal bitmapped fonts. Elements may have a rotation angle, row and column positions and so on. Each kind of element may have specific options, check the docs.
+
+== Barcodes
+
+Barcodes may be created through the <tt>Rdpl::Element::Barcode</tt> class.
+
+  barcode = Rdpl::Barcode.new(
+    :rotation              => 4,
+    :font_id               => Rdpl::Barcode::CODE_128,
+    :data                  => 'SOME DATA 12345',
+    :height                => 123,
+    :wide_bar_multiplier   => 3,
+    :narrow_bar_multiplier => 4,
+    :row_position          => 123,
+    :column_position       => 234
+  )
+
+Take a look at the project's rdoc for available options.
+
+== Boxes
+
+Boxes may be created through the <tt>Rdpl::Element::Box</tt> class.
+
+  box = Rdpl::Box.new(
+    :horizontal_width         => 12.2,
+    :vertical_width           => 14.3,
+    :row_position             => 23.4,
+    :column_position          => 24.5,
+    :bottom_and_top_thickness => 34.6,
+    :sides_thickness          => 45.6
+  )
+
+Take a look at the project's rdoc for available options.
+
+== Lines
+
+Lines may be created through the <tt>Rdpl::Element::Line<tt> class.
+
+  line = Rdpl::Line.new(
+    :horizontal_width => 12.2,
+    :vertical_width   => 14.3,
+    :row_position     => 23.4,
+    :column_position  => 24.5
+  )
+
+Take a look at the project's rdoc for available options.
+
+== Text in Bitmapped fonts
+
+Text elements printed using internal bitmapped fonts may be created through the <tt>Rdpl::Element::BitmappedText</tt> class.
+
+  text = Rdpl::BitmappedText.new(
+    :font_id           => 2,
+    :width_multiplier  => 2,
+    :height_multiplier => 3,
+    :row_position      => 20,
+    :column_position   => 30,
+    :data              => 'HEY LOOK AT ME'
+  )
+
+Take a look at the project's rdoc for available options.
 
 == Note on Patches/Pull Requests
  
