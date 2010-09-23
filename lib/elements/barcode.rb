@@ -1,4 +1,5 @@
 module Rdpl
+  # Represents a barcode to be printed.
   class Barcode
     include Element
 
@@ -12,11 +13,13 @@ module Rdpl
 
     DEFAULT_HEIGHT = 25
 
+    # Sets the barcode height. Valid values go from 0 to 999.
     def height=(height)
       raise InvalidBarcodeHeightError unless valid_height_range.include?(height)
       @height = height
     end
 
+    # Returns the barcode's height. Defaults to 25.
     def height
       @height || DEFAULT_HEIGHT
     end

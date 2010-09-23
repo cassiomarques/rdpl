@@ -1,4 +1,5 @@
 module Rdpl
+  # Represents a label to be printed. Labels must me included in an instance of <tt>Rdpl::Job</tt>.
   class Label
     attr_reader :state, :quantity
     attr_writer :job
@@ -10,38 +11,60 @@ module Rdpl
     DEFAULT_DOT_SIZE = 11
     DEFAULT_HEAT     = 14
 
+    # Creates a new instance of <tt>Rdpl::Label</tt>
+    #
+    # Available options are:
+    #
+    # * <tt>:heat</tt> the heat setting to be used when printing this label. This is optional and defaults to 14.
+    # * <tt>:dot_size</tt> the dot size to be used when printing this label. This is optional and defaults to 11.
+    # * <tt>:start_of_print</tt> the inicial position to start printing the label. This is optional and has no default value, since this setting depends on the printer model.
+    # * <tt>:quantity</tt> the number of copies of this label to be printed.
     def initialize(options = {})
       @contents = ''
       start options
     end
 
+    # Dumps this label's contents to a string.
     def dump
       @contents.dup
     end
 
+    # Closes this label for edition. This appends DPL specific commands to the label, 
+    # so the printer knows where the printing must end and where another label is started.
     def end!
       self << formatted_quantity unless quantity.nil?
       self << FINISH 
       self.state = :finished
     end
 
-    def [](arg)
+    def [](arg) # :nodoc:
       @contents[arg]
     end
 
+    # Adds a new element to this label. 
+    # An element can be one of the following:
+    # * <tt>Rdpl::Barcode</tt>
+    # * <tt>Rdpl::BitmappedText</tt>
+    # * <tt>Rdpl::Box</tt>
+    # * <tt>Rdpl::Line</tt>
+    # * A simple string containing DPL commands
     def <<(arg)
       raise EndedElementError unless state == :open
       @contents << arg.to_s << NEW_LINE
     end
 
+    # Returns the current dot size.
     def dot_size
       @dot_size || DEFAULT_DOT_SIZE
     end
 
+    # Returns the current heat setting to be used when printing.
     def heat
       @heat || DEFAULT_HEAT
     end
 
+    # Returns <tt>true</tt> if this label's job is setted to use millimeters as measurement unit.
+    # I the label does not have a job yet, it will return <tt>false</tt>.
     def mm?
       @job ? @job.mm? : false
     end
@@ -72,9 +95,9 @@ module Rdpl
     def start(options = {})
       self.state = :open
       command START
+      options.each_pair { |option, value| self.send("#{option}=", value) }
       self << formatted_heat
       self << formatted_dot_size
-      options.each_pair { |option, value| self.send("#{option}=", value) }
     end
 
     [:state, :heat, :dot_size, :start_of_print, :quantity].each do |method|

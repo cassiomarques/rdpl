@@ -1,4 +1,5 @@
 module Rdpl
+  # Represents some text printed using an internal bitmapped font.
   class BitmappedText
     include Element
 

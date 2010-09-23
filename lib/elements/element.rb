@@ -13,10 +13,28 @@ module Rdpl
     class FixedValueError              < StandardError; end
     class InvalidAssigmentError        < StandardError; end
 
+    # Initializes a new element. Available options are:
+    # * <tt>:rotation</tt> the element's rotation.
+    # * <tt>:font_id</tt> the element's font id. Can go from 'a' to 'z' or 'A' to 'Z' for barcodes or from '0' to '9' for bitmapped fonts.
+    # * <tt>:data</tt> the data to be printed or encoded, usually some text.
+    # * <tt>:height</tt> the element's height. Can go from 0 to 999 for barcodes or any other value for another kind of element.
+    # * <tt>:row_position</tt> the vertical position of the element inside the label, in hundredths of an inch or tenths of a millimeter.
+    # * <tt>:column_position</tt> the horizontal position of the element inside the label, in hundredths of an inch or tenths of a millimeter.
+    # * <tt>:bottom_and_top_thickness</tt> defines the thickness of bottom and top box edges. Used only for <tt>Rdpl::Element::Box</tt>.
+    # * <tt>:sides_thickness</tt> defines the thickness of the box sides. Used only for <tt>Rdpl::Element::Box</tt>.
+    # * <tt>:width_multiplier</tt> 
+    # * <tt>:height_multiplier</tt>
     def initialize(options = {})
       options.each_pair { |option, value| self.send "#{option}=", value }
     end
 
+    # Sets the element's rotation angle. Can be one of the following constants:
+    # * <tt>Rdpl::Element::ROTATION_0_DEGREES</tt>
+    # * <tt>Rdpl::Element::ROTATION_90_DEGREES</tt>
+    # * <tt>Rdpl::Element::ROTATION_180_DEGREES</tt>
+    # * <tt>Rdpl::Element::ROTATION_270_DEGREES</tt>
+    #
+    # Raises <tt>Rdpl::Element::InvalidRotationError</tt> if passed a value different from these constants.
     def rotation=(rotation)
       raise InvalidRotationError, rotation unless valid_rotation_range.include?(rotation)
       @rotation = rotation
@@ -28,12 +46,12 @@ module Rdpl
 
     # Sets the element font type. Available types are:
     #
-    # Type    Interpretation
-    # 0-9     Font
-    # A-T     Barcode with human readable text
-    # a-z     Barcode without human readable text
-    # X       Line, box, polygon, circle
-    # Y       Image
+    # * Type    Interpretation
+    # * 0-9     Font
+    # * A-T     Barcode with human readable text
+    # * a-z     Barcode without human readable text
+    # * X       Line, box, polygon, circle
+    # * Y       Image
     def font_id=(font_id)
       raise InvalidFontIdError unless valid_font_id_ranges.any? { |range| range.include? font_id }
       @font_id = font_id
@@ -49,27 +67,29 @@ module Rdpl
       @width_multiplier = multiplier
     end
 
+    # Returns the specified width multiplier. Defaults to 1.
     def width_multiplier
       @width_multiplier || 1
     end
 
+    # Valid values goes from 1 to 9 and A to O (base 25)
     def height_multiplier=(multiplier)
       raise InvalidHeightMultiplierError, multiplier unless valid_width_or_height_multiplier?(multiplier)
       @height_multiplier = multiplier
     end
 
-    # Valid values goes from 1 to 9 and A to O (base 25)
+    # Returns the specified height multiplier. Defaults to 1.
     def height_multiplier
       @height_multiplier || 1
     end
 
-    # Used only by barcode and smooth/scaleble fonts, but has to be present as 000 
+    # Used only by barcode and smooth/scalable fonts, but has to be present as 000 
     # in other elements.
     def formatted_height
       '000'
     end
 
-    # Interpreted in hundredths of an inch or tenths of millimeters, depending on
+    # Interpreted in hundreths of an inch or tenths of millimeters, depending on
     # the measurement used in the printing job.
     def row_position=(position)
       @row_position = position   

@@ -8,7 +8,7 @@ module Rdpl
   NEW_LINE = CR + LF
   FEED     = 'F'
 
-  module Commandable
+  module Commandable # :nodoc:
     def command(param)
       raise EndedElementError if self.state == :finished
       @contents << STX << param << NEW_LINE
@@ -20,8 +20,10 @@ module Rdpl
     EDGE      = 'e'
   end
 
+  # Raised when a job is created without a printer name
   class MissingPrinterNameError < StandardError; end
-  class EndedElementError         < StandardError; end
+  # Raised when inserting a new command to a already closed job.
+  class EndedElementError       < StandardError; end
 end
 
 require 'job'

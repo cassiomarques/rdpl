@@ -1,4 +1,5 @@
 module Rdpl
+  # Represents a line to be printed in the label.
   class Line 
     DEFAULT_CHARACTER = 'l'
 

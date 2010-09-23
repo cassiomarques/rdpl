@@ -66,7 +66,7 @@ describe Rdpl::Label do
     end
   end
 
-  it "raises Rdpl::EndedElementError if it's ended andwe try to add new content" do
+  it "raises Rdpl::EndedElementError if it's ended and we try to add new content" do
     label = Rdpl::Label.new
     label.end!
     lambda do
