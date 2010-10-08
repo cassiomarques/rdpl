@@ -36,6 +36,10 @@ Labels also accept a block when adding new lines, barcodes, boxes or bitmapped t
 
 It'll always yield a new instance of the given element to the block, so you can specify the element's properties. The other available methods to add new elements to the label are <tt>add_barcode</tt>, <tt>add_box</tt> and <tt>add_bitmapped_text</tt>.
 
+All labels must be closed before printing, so the printer knows where the printing must end and where another label is started. 
+
+  label.end!
+
 Take a look at the project's rdoc for available options.
 
 == Elements
